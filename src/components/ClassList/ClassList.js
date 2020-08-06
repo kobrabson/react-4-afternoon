@@ -1,35 +1,42 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
-export default class Student extends Component {
+export default class ClassList extends Component {
   constructor() {
     super();
 
     this.state = {
-      studentInfo: {}
+      students: []
     };
   }
 
   componentDidMount() {
-    return axios
-      .get(`http://localhost:3005/students/${this.props.match.params.id}`)
+    axios
+      .get(
+        `http://localhost:3005/students?class=${this.props.match.params.class}`
+      )
       .then(results => {
         this.setState({
-          studentInfo: results.data
+          students: results.data
         });
       });
   }
 
   render() {
+    const students = this.state.students.map((student, i) => (
+      <Link to={`/student/${student.id}`} key={i}>
+        <h3>
+          {student.first_name} {student.last_name}
+        </h3>
+      </Link>
+    ));
+
     return (
       <div className="box">
-        <h1>Student:</h1>
-        {Student}
-        <h1>
-          {this.state.studentInfo.first_name} {this.state.studentInfo.last_name}
-        </h1>
-        <h3>Grade: {this.state.studentInfo.grade}</h3>
-        <h3>Email: {this.state.studentInfo.email}</h3>
+        <h1>{this.props.match.params.class}</h1>
+        <h2>ClassList:</h2>
+        {students}
       </div>
     );
   }
